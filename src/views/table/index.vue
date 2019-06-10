@@ -6,37 +6,45 @@
       element-loading-text="Loading"
       border
       fit
+      stripe
       highlight-current-row
+      max-height=""
     >
-      <el-table-column align="center" label="ID" width="95">
+      <el-table-column align="center" label="IDNumber" width="95">
         <template slot-scope="scope">
-          {{ scope.$index }}
+          {{ scope.row.IDNumber }}
         </template>
       </el-table-column>
-      <el-table-column label="Title">
+      <el-table-column label="Surname">
         <template slot-scope="scope">
-          {{ scope.row.title }}
+          {{ scope.row.Surname }}
         </template>
       </el-table-column>
-      <el-table-column label="Author" width="110" align="center">
+      <el-table-column label="OtherName" width="110" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.author }}</span>
+          <span>{{ scope.row.OtherName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Pageviews" width="110" align="center">
+      <el-table-column label="Mobile" width="150" align="center">
         <template slot-scope="scope">
-          {{ scope.row.pageviews }}
+          <i class="el-icon-phone" />
+          <span>{{ scope.row.MobileNumber }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column align="center" prop="AlternativeNumber" label="Alternative Number" width="200">
+        <template slot-scope="scope">
+          <i class="el-icon-phone" />
+          <span>{{ scope.row.AlternativeNumber }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column align="center" prop="Nationality" label="Nationality" width="200">
+        <template slot-scope="scope">
+          {{ scope.row.Nationality }}
         </template>
       </el-table-column>
       <el-table-column class-name="status-col" label="Status" width="110" align="center">
         <template slot-scope="scope">
-          <el-tag :type="scope.row.status | statusFilter">{{ scope.row.status }}</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" prop="created_at" label="Display_time" width="200">
-        <template slot-scope="scope">
-          <i class="el-icon-time" />
-          <span>{{ scope.row.display_time }}</span>
+          <el-tag :type="scope.row.Status | statusFilter">{{ scope.row.Status }}</el-tag>
         </template>
       </el-table-column>
     </el-table>
@@ -44,23 +52,23 @@
 </template>
 
 <script>
-import { getList } from '@/api/table'
-
+// import { getList } from '@/api/table'
+import axios from 'axios'
 export default {
   filters: {
     statusFilter(status) {
       const statusMap = {
-        published: 'success',
-        draft: 'gray',
-        deleted: 'danger'
+        'approved': 'success',
+        'pending': 'gray',
+        'declined': 'danger'
       }
       return statusMap[status]
     }
   },
   data() {
     return {
-      list: null,
-      listLoading: true
+      list: [],
+      listLoading: false
     }
   },
   created() {
@@ -69,10 +77,20 @@ export default {
   methods: {
     fetchData() {
       this.listLoading = true
-      getList().then(response => {
-        this.list = response.data.items
-        this.listLoading = false
-      })
+      axios.get('http://192.168.1.237:9000/rider')
+        .then(response => {
+          var item = {}
+          for (item in response.data) {
+            console.log(response.data[item])
+            this.list.push(response.data[item])
+          }
+          this.listLoading = false
+        })
+        .catch(err => console.log(err))
+      // getList().then(response => {
+      //   this.list = response.data.items
+      //   this.listLoading = false
+      // })
     }
   }
 }

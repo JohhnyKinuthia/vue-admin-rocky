@@ -1,16 +1,11 @@
-import Mock from 'mockjs'
+import axios from 'axios'
 
-const data = Mock.mock({
-  'items|30': [{
-    id: '@id',
-    title: '@sentence(10, 20)',
-    'status|1': ['published', 'draft', 'deleted'],
-    author: 'name',
-    display_time: '@datetime',
-    pageviews: '@integer(300, 5000)'
-  }]
-})
-
+var data = { 'Surname': 'Isaac' }
+function getData() {
+  axios.get('http://localhost:9000/rider').then(response => { data = response.data }).catch(err => console.log(err))
+}
+console.log(data)
+getData()
 export default [
   {
     url: '/table/list',
